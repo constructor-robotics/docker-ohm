@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ohm_ros2</name>
+  <version>0.1.0</version>
+  <description>
+    Live OHM (CSIRO Occupancy Homogeneous Map) node for ROS 2 Humble.
+    Subscribes to sensor_msgs/PointCloud2 + tf, integrates rays into a GPU
+    occupancy map via ohm::GpuMap, publishes the occupied voxel cloud.
+    Set use_ndt:=true to switch the internal mapper to ohm::GpuNdtMap.
+  </description>
+  <maintainer email="hamzahussain5500@gmail.com">Hamza Hussain</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>tf2_sensor_msgs</depend>
+  <depend>message_filters</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

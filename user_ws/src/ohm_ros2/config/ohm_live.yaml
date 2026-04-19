@@ -1,0 +1,34 @@
+ohm_live_node:
+  ros__parameters:
+    # Map geometry
+    resolution: 0.1                 # voxel edge, metres
+    range_min: 0.5                  # euclidean range clip in camera frame
+    range_max: 5.0                  # ZED 2i stereo sweet spot
+
+    # Occupancy probabilities (log-odds internally). Tune these — stereo
+    # defaults differ from lidar. miss < 0.5 < hit.
+    hit_probability: 0.7
+    miss_probability: 0.4
+
+    # Frames / topics
+    target_frame: "map"
+    cloud_topic: "/zed/zed_node/point_cloud/cloud_registered"
+    occupied_cloud_topic: "/ohm/occupied_cloud"
+
+    # GPU sizing (0 = auto, up to min(1 GiB, 3/4 GPU RAM))
+    expected_element_count: 16384
+    gpu_mem_size_mb: 0
+
+    # TF
+    tf_lookup_timeout_sec: 0.05
+
+    # Publication cadence for the occupied-voxel cloud
+    publish_rate_hz: 2.0
+
+    # Mapper selection. Flip use_ndt to true for NDT-OM (same ray path,
+    # per-voxel Gaussian). ndt_sensor_noise_m is the range noise estimate.
+    use_ndt: false
+    ndt_sensor_noise_m: 0.05
+
+    # /ohm/save (std_srvs/Trigger) writes the current map here.
+    save_path: "/data/ohm_live.ohm"

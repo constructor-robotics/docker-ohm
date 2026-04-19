@@ -1,0 +1,53 @@
+# OHM live mapping container (ROS 2 Humble + OHM CUDA).
+# Host networking + GPU passthrough so the node can discover the ZED topics
+# published by docker-zed on the same machine and use CUDA for ray tracing.
+services:
+  ohm-ros2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ROS_DISTRO: humble
+        OHM_REF: master
+        BUILD_JOBS: "16"
+    image: ohm-ros2:humble
+    container_name: ohm-ros2
+    hostname: ohm-ros2
+    extra_hosts:
+      - "ohm-ros2:127.0.0.1"
+    stdin_open: true
+    tty: true
+    # Host networking so ZED topics published in docker-zed are visible here
+    # via DDS (matches the docker-zed setup).
+    network_mode: host
+    ipc: host
+    pid: host
+    environment:
+      - DISPLAY=${DISPLAY:-}
+      - QT_X11_NO_MITSHM=1
+      - TERM=xterm-256color
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
+      - ROS_LOCALHOST_ONLY=${ROS_LOCALHOST_ONLY:-0}
+      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}
+      - FASTDDS_DEFAULT_PROFILES_FILE=${FASTDDS_DEFAULT_PROFILES_FILE:-}
+      - CYCLONEDDS_URI=${CYCLONEDDS_URI:-}
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
+    volumes:
+      # Ament workspace with ohm_ros2 — bind-mounted so you can edit the
+      # node source from the host and rebuild with `colcon build` inside.
+      - ./user_ws:/root/user_ws
+      # Shared bag / output directory — saved .ohm files land here.
+      - ../../bags:/data
+      # DDS profiles, same layout as docker-zed.
+      - ../docker-zed/dds_profiles:/dds_profiles:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    working_dir: /root/user_ws
+    command: /bin/bash -l
