@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- FastDDS factory defaults - no custom transport configuration -->
+<!-- FastDDS will use built-in UDP multicast transport with OS default buffer sizes -->
+<!-- Reference: https://fast-dds.docs.eprosima.com/en/latest/fastdds/xml_configuration/xml_configuration.html -->
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+</profiles>

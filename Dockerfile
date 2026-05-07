@@ -3,7 +3,7 @@
 # OHM (CSIRO) + ROS 2 Humble + CUDA — live mapping + offline tools image.
 #
 # CUDA 12.2 / Ubuntu 22.04 (Jammy). Jammy is the native Ubuntu for ROS 2
-# Humble, which matches the docker-zed image in this workspace.
+# Humble, which matches the docker-stereo image in this workspace.
 #
 # Layout:
 #   /opt/ohm                    OHM source tree (pinned via OHM_REF)
@@ -155,9 +155,20 @@ RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /root/.bashrc \
 ENV PATH=/usr/local/bin:${PATH} \
     LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH}
 
+# ---------------------------------------------------------------------------
+# 7. Supervisor for the UI portal.
+# ---------------------------------------------------------------------------
+RUN apt-get update && apt-get install -y --no-install-recommends supervisor \
+    && rm -rf /var/lib/apt/lists*
+
 # Data volume for bags / saved .ohm files.
-RUN mkdir -p /data
+RUN mkdir -p /data /var/log/supervisor
 VOLUME ["/data"]
 
+COPY entrypoint.sh /entrypoint.sh
+COPY supervisord.conf /etc/supervisor/supervisord.conf
+RUN chmod +x /entrypoint.sh
+
 WORKDIR /root/user_ws
-CMD ["/bin/bash", "-l"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]

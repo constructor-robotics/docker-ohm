@@ -1,2 +1,0 @@
-Invoking command in '/root/user_ws/build/ohm_ros2': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /root/user_ws/src/ohm_ros2 -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/root/user_ws/install/ohm_ros2
-Invoked command in '/root/user_ws/build/ohm_ros2' returned '1': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /root/user_ws/src/ohm_ros2 -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/root/user_ws/install/ohm_ros2

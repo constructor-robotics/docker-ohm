@@ -1,0 +1,11 @@
+/// Zenoh factory defaults - no custom configuration
+/// Zenoh session runs in client mode, connecting to a local router (zenohd)
+/// The router must be started before launching ROS2 nodes:
+///   ros2 run rmw_zenoh_cpp rmw_zenohd
+/// Reference: https://zenoh.io/docs/manual/configuration/
+{
+  "mode": "client",
+  "connect": {
+    "endpoints": ["tcp/localhost:7447"]
+  }
+}

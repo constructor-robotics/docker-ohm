@@ -1,6 +1,6 @@
 # ZED 2i → OHM mapping pipeline
 
-A practical, staged guide for feeding a **ZED 2i stereo camera** into **OHM** (CSIRO's GPU occupancy map) using the two Dockerized setups in this repo (`docker-zed` for the camera, `docker-ohm-ros2` for mapping — same image hosts both the live ROS 2 node and the offline `ohmpop*` tools).
+A practical, staged guide for feeding a **ZED 2i stereo camera** into **OHM** (CSIRO's GPU occupancy map) using the two Dockerized setups in this repo (`docker-stereo` for the camera, `docker-ohm-ros2` for mapping — same image hosts both the live ROS 2 node and the offline `ohmpop*` tools).
 
 If you're looking for generic OHM tool usage, see [USAGE.md](USAGE.md) instead. This file is specific to the ZED-as-input case.
 
@@ -212,7 +212,7 @@ Iterate on `--resolution`, `--hit`, `--miss`, `--range-max`. Don't touch the bag
 | Runs on… | What |
 |---|---|
 | **Host (ROS 2)** | `ros2 bag record`, `bag2ohm.py`. |
-| **`docker-zed`** | ZED driver, publishes cloud + pose + TF. |
+| **`docker-stereo`** | ZED driver, publishes cloud + pose + TF. |
 | **`docker-ohm-ros2`** | Live: `ohm_live_node` subscribing to ZED topics. Offline: `ohmpop*`, `ohminfo`, `ohm2ply`, `ohmheightmap`. |
 
 Both live (Path B) and offline (Path A) tools ship in the same `docker-ohm-ros2` image. The `/data` bind mount carries bags + saved `.ohm` files between containers and the host.

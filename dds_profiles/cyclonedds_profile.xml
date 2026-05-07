@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Restrict CycloneDDS to the loopback interface only.
+     All containers use network_mode: host, so loopback is shared between them.
+     Without this, CycloneDDS discovers every machine on every attached Ethernet
+     interface (lab network, camera link-local) and floods logs with UDP write errors
+     when those machines don't have a CycloneDDS listener. -->
+<CycloneDDS>
+  <Domain id="any">
+    <General>
+      <Interfaces>
+        <NetworkInterface name="lo" multicast="true" />
+      </Interfaces>
+    </General>
+    <Internal>
+      <!-- Request a large socket receive buffer so 9 MB image frames are not
+           silently dropped by the kernel before CycloneDDS reads them.
+           The kernel grants min(this value, net.core.rmem_max).
+           Run:  sudo sysctl -w net.core.rmem_max=26214400
+           to raise the host kernel limit if needed. -->
+      <SocketReceiveBufferSize min="10MB"/>
+    </Internal>
+  </Domain>
+</CycloneDDS>

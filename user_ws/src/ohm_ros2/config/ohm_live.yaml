@@ -2,17 +2,18 @@ ohm_live_node:
   ros__parameters:
     # Map geometry
     resolution: 0.1                 # voxel edge, metres
-    range_min: 0.5                  # euclidean range clip in camera frame
-    range_max: 5.0                  # ZED 2i stereo sweet spot
+    range_min: 0.3                  # monocular depth: can be closer than stereo
+    range_max: 8.0                  # Depth Anything V3 metric; extend beyond ZED's 5 m
 
-    # Occupancy probabilities (log-odds internally). Tune these — stereo
-    # defaults differ from lidar. miss < 0.5 < hit.
+    # Occupancy probabilities (log-odds internally).
+    # Monocular depth is noisier than stereo — keep the gap wide so the map
+    # converges confidently rather than flickering.
     hit_probability: 0.7
-    miss_probability: 0.4
+    miss_probability: 0.45
 
     # Frames / topics
     target_frame: "map"
-    cloud_topic: "/zed/zed_node/point_cloud/cloud_registered"
+    cloud_topic: "/depth_anything_v3/points"
     occupied_cloud_topic: "/ohm/occupied_cloud"
 
     # GPU sizing (0 = auto, up to min(1 GiB, 3/4 GPU RAM))
@@ -27,8 +28,8 @@ ohm_live_node:
 
     # Mapper selection. Flip use_ndt to true for NDT-OM (same ray path,
     # per-voxel Gaussian). ndt_sensor_noise_m is the range noise estimate.
-    use_ndt: false
-    ndt_sensor_noise_m: 0.05
+    use_ndt: true
+    ndt_sensor_noise_m: 0.15        # monocular is ~3× noisier than stereo; tune up/down
 
     # /ohm/save (std_srvs/Trigger) writes the current map here.
     save_path: "/data/ohm_live.ohm"
