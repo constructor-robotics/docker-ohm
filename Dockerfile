@@ -155,19 +155,20 @@ RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /root/.bashrc \
 ENV PATH=/usr/local/bin:${PATH} \
     LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH}
 
-# ---------------------------------------------------------------------------
-# 7. Supervisor for the UI portal.
-# ---------------------------------------------------------------------------
-RUN apt-get update && apt-get install -y --no-install-recommends supervisor \
-    && rm -rf /var/lib/apt/lists*
-
 # Data volume for bags / saved .ohm files.
-RUN mkdir -p /data /var/log/supervisor
+RUN mkdir -p /data
 VOLUME ["/data"]
+
+# ---------------------------------------------------------------------------
+# 7. Supervisor (web UI on port 9006)
+# ---------------------------------------------------------------------------
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        supervisor \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY entrypoint.sh /entrypoint.sh
 COPY supervisord.conf /etc/supervisor/supervisord.conf
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /entrypoint.sh && mkdir -p /var/log/supervisor
 
 WORKDIR /root/user_ws
 ENTRYPOINT ["/entrypoint.sh"]

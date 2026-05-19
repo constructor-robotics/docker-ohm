@@ -13,17 +13,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 IMAGE_TAG="${TAG:-ohm-ros2:humble}"
-DATA_DIR="${DATA:-${SCRIPT_DIR}/data}"
+DATA_DIR="${DATA:-${SCRIPT_DIR}/../../bags}"
 WS_DIR="${WS:-${SCRIPT_DIR}/user_ws}"
 CONTAINER_NAME="${NAME:-ohm-ros2}"
 ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-0}"
-# Match the rest of the workspace — all containers use CycloneDDS on loopback.
-RMW="${RMW_IMPLEMENTATION:-rmw_cyclonedds_cpp}"
-
-# Hardcode the container-internal DDS profile path so a CYCLONEDDS_URI
-# exported in a host dev shell can never override it.
-DDS_PROFILES_DIR="${SCRIPT_DIR}/dds_profiles"
-CYCLONEDDS_URI_VAL="file:///dds_profiles/cyclonedds_profile.xml"
+RMW="${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}"
 
 DOCKER_ARGS=(
     --rm
@@ -37,18 +31,6 @@ DOCKER_ARGS=(
     -e "ROS_DOMAIN_ID=${ROS_DOMAIN_ID}"
     -e "RMW_IMPLEMENTATION=${RMW}"
 )
-
-# Mount the shared DDS profiles directory if it exists.
-if [[ -d "${DDS_PROFILES_DIR}" ]]; then
-    DOCKER_ARGS+=(-v "${DDS_PROFILES_DIR}:/dds_profiles:ro")
-    echo "==> DDS profiles: ${DDS_PROFILES_DIR}"
-fi
-
-# Pass CYCLONEDDS_URI only when set (empty string would confuse CycloneDDS).
-if [[ -n "${CYCLONEDDS_URI_VAL}" ]]; then
-    DOCKER_ARGS+=(-e "CYCLONEDDS_URI=${CYCLONEDDS_URI_VAL}")
-    echo "==> CYCLONEDDS_URI=${CYCLONEDDS_URI_VAL}"
-fi
 
 # Workspace bind mount (always — ohm_ros2 is not baked into the image).
 DOCKER_ARGS+=(-v "${WS_DIR}:/root/user_ws")

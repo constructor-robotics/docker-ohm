@@ -28,12 +28,9 @@ services:
       - TERM=xterm-256color
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
       - ROS_LOCALHOST_ONLY=${ROS_LOCALHOST_ONLY:-0}
-      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
-      # Hardcoded to the container-internal mount path so host env vars
-      # (e.g. CYCLONEDDS_URI exported in a dev shell) can never override them.
-      - FASTDDS_DEFAULT_PROFILES_FILE=/dds_profiles/fastdds_profile.xml
-      - CYCLONEDDS_URI=file:///dds_profiles/cyclonedds_profile.xml
-      - RMW_ZENOH_CONFIG_FILE=/dds_profiles/zenoh_config.json5
+      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}
+      - FASTDDS_DEFAULT_PROFILES_FILE=${FASTDDS_DEFAULT_PROFILES_FILE:-}
+      - CYCLONEDDS_URI=${CYCLONEDDS_URI:-}
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
       # Force GLX to use the NVIDIA dGPU instead of the Intel iGPU —
@@ -44,10 +41,7 @@ services:
       # Ament workspace with ohm_ros2 — bind-mounted so you can edit the
       # node source from the host and rebuild with `colcon build` inside.
       - ./user_ws:/root/user_ws
-      # Shared bag / output directory — saved .ohm files land here.
-      # Override with DATA_DIR env var or change this path to your bags folder.
       - ${DATA_DIR:-./data}:/data
-      # DDS profiles — own copy, same loopback+large-buffer config as all other containers.
       - ./dds_profiles:/dds_profiles:ro
       - /tmp/.X11-unix:/tmp/.X11-unix
     deploy:

@@ -3,7 +3,7 @@ user_ws/build/
 user_ws/install/
 user_ws/log/
 
-# data outputs (saved .ohm / .ply / .laz / bag files)
+# data outputs — keep the placeholder, ignore everything else
 data/*
 !data/.gitkeep
 
